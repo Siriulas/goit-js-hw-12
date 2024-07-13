@@ -1,5 +1,3 @@
-// render-functions.js
-
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import iziToast from 'izitoast';
@@ -9,12 +7,16 @@ let lightbox;
 
 export function renderImages(images) {
   const gallery = document.querySelector('.gallery');
-  gallery.innerHTML = images.map(image => createImageCard(image)).join('');
+  const imagesHTML = images.map(image => createImageCard(image)).join('');
+  gallery.insertAdjacentHTML('beforeend', imagesHTML);
+
   if (lightbox) {
     lightbox.refresh();
   } else {
     lightbox = new SimpleLightbox('.gallery a');
   }
+
+  smoothScroll();
 }
 
 function createImageCard(image) {
@@ -24,13 +26,24 @@ function createImageCard(image) {
         <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
       </a>
       <div class="info">
-       <div> <p>Likes: <p>${image.likes}</p></p></div>
+        <div> <p>Likes: <p>${image.likes}</p></p></div>
         <div><p>Views: <p>${image.views}</p></p></div>
         <div><p>Comments: <p>${image.comments}</p></p></div>
-       <div> <p>Downloads: <p>${image.downloads}</p></p></div>
+        <div> <p>Downloads: <p>${image.downloads}</p></p></div>
       </div>
     </div>
   `;
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
 
 export function clearGallery() {
